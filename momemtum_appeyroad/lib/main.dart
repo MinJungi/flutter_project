@@ -179,13 +179,159 @@ class _ClockState extends State<Clock> {
   }
 }
 
+class Todo extends StatefulWidget {
+  @override
+  _TodoState createState() => _TodoState();
+}
 
-class Todo extends StatelessWidget {
+class _TodoState extends State<Todo> {
+  bool _todoVisible = false;
+
   @override
   Widget build(BuildContext context) {
-    return Text("Todo");
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Row(
+          children: [
+            Expanded(child: Container()),
+            AnimatedOpacity(
+              opacity: _todoVisible?1:0,
+              duration: Duration(milliseconds: 300),
+              child: Visibility(
+                visible: _todoVisible,
+                child: TodoBox(),
+              ),
+            ),
+          ],
+        ),
+        Row(
+          //mainAxisSize: MainAxisSize.min,
+          children: [
+            Expanded(child: Container()),
+            FlatButton(
+              minWidth: 0,
+              onPressed: (){
+                setState(() {
+                  _todoVisible = !_todoVisible;
+                });
+              },
+              child: Text("Todo", style: TextStyle(color:Colors.white),),
+            ),
+          ],
+        ),
+
+      ],
+    );
   }
 }
+
+class TodoBox extends StatefulWidget {
+  @override
+  _TodoBoxState createState() => _TodoBoxState();
+}
+
+class _TodoBoxState extends State<TodoBox> {
+  List<String> dropDownList = <String>['Inbox', 'Today', 'Done'];
+  String dropDownValue = 'Inbox';
+  int todoIndex = 0;
+  List<bool> showingScreen = <bool>[true, false, false];
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 250,
+      width: 350,
+      //color: Colors.white,
+      padding: EdgeInsets.fromLTRB(20, 5, 10, 10),
+      margin: EdgeInsets.fromLTRB(0,0,0,5),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: const BorderRadius.all(const Radius.circular(8)),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(0),
+        child: Stack(
+          children: [
+            Align(
+              alignment: Alignment.topLeft,
+              child: DropdownButton<String>(
+                value: dropDownValue,
+                icon: Icon(Icons.keyboard_arrow_down, color:Colors.black26, size:24,),
+                style: TextStyle(color: Colors.black),
+                items: dropDownList.map<DropdownMenuItem<String>>((String value){
+                  return DropdownMenuItem<String>(value: value, child: Text(value,));
+                }).toList(),
+                onChanged: (String newValue){
+                  setState(() {
+                    dropDownValue = newValue;
+                    showingScreen[todoIndex] = false;
+                    todoIndex = dropDownList.indexOf(newValue);
+                    showingScreen[todoIndex] = true;
+                  });
+                },
+              ),
+            ),
+
+            Align( //Inbox screen
+              alignment: Alignment.center,
+              child: Visibility(
+                visible: showingScreen[0],
+                child: Column(
+                  mainAxisSize : MainAxisSize.min,
+                  children: [
+                    Text("Add a todo to get started", style: TextStyle(color:Colors.black),),
+                    Text("Inbox", style: TextStyle(color:Colors.black),),
+                    Text("New todo", style: TextStyle(color:Colors.black),),
+                  ],
+                ),
+              ),
+            ),
+
+            Align( //Today screen
+              alignment: Alignment.center,
+              child: Visibility(
+                visible: showingScreen[1],
+                child: Column(
+                  mainAxisSize : MainAxisSize.min,
+                  children: [
+                    Text("Add a todo to get started", style: TextStyle(color:Colors.black),),
+                    Text("Today", style: TextStyle(color:Colors.black),),
+                    Text("New todo", style: TextStyle(color:Colors.black),),
+                  ],
+                ),
+              ),
+            ),
+
+            Align( //Done screen
+              alignment: Alignment.center,
+              child: Visibility(
+                visible: showingScreen[2],
+                child: Column(
+                  mainAxisSize : MainAxisSize.min,
+                  children: [
+                    Text("No completed today yet", style: TextStyle(color:Colors.black),),
+                    Text("Done", style: TextStyle(color:Colors.black),),
+                    Text("New todo", style: TextStyle(color:Colors.black),),
+                  ],
+                ),
+              ),
+            ),
+
+            Align(
+              alignment: Alignment.topRight,
+              child: IconButton(
+                icon: Icon(Icons.more_horiz, color: Colors.black,),
+                //onPressed: ,
+              ),
+            ),
+          ],
+        )
+      ),
+    );
+  }
+}
+
 
 class Setting extends StatefulWidget {
   @override

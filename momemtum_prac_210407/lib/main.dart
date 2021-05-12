@@ -590,7 +590,7 @@ class _MoreBoxState extends State<MoreBox> {
       width: _settingWidth + 2*_paddingSize,
       //color: Colors.black12,
       decoration: BoxDecoration(
-        color: Colors.black12,
+        color: Colors.grey[300],
         borderRadius: const BorderRadius.all(const Radius.circular(_paddingSize)),
       ),
       child: Padding(
@@ -601,7 +601,7 @@ class _MoreBoxState extends State<MoreBox> {
             return Container(
               height: _settingHeight,
               width: _settingWidth,
-              //color: Colors.green,
+              //color: Colors.grey,
               child: Stack(
                 children: [
                   //EachMoreBox(index : index),
@@ -609,7 +609,7 @@ class _MoreBoxState extends State<MoreBox> {
                     child: Center(child: Text('${moreContent[index]}', style: TextStyle(color: Colors.black),)),
                     onTap: (){
                       touchedIndex = index;
-
+                      showAlertDialog(context, touchedIndex);
                     },
                   ),
                 ],
@@ -620,6 +620,44 @@ class _MoreBoxState extends State<MoreBox> {
       ),
     );
   }
+}
+
+void showAlertDialog(BuildContext context, int index) async{
+  List<String> contents = <String>['Auto Focus', 'Add integration'];
+
+  String result = await showDialog(
+    context: context,
+    barrierDismissible: true,
+    builder: (BuildContext context) {
+      if(index<2)
+        return AlertDialog(
+          title: Text('Alert', style: TextStyle(color: Colors.black),),
+          content: Text(contents[index], style: TextStyle(color: Colors.black),),
+          actions: <Widget>[
+            FlatButton(
+              onPressed: (){
+                Navigator.pop(context, 'OK');
+              },
+              child: Text('OK'),
+            ),
+            FlatButton(
+              onPressed: (){
+                Navigator.pop(context, "Cancel");
+              },
+              child: Text('Cancel'),
+            ),
+          ],
+        );
+      else if(index ==2)
+        return AlertDialog(
+
+        );
+      else return null;
+    },
+  );
+
+  //scaffoldKey.currentState
+
 }
 
 class EachMoreBox extends StatefulWidget {
